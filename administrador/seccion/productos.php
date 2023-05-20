@@ -21,17 +21,61 @@
             /*Con los dos puntos indicamos los parametros a usar */
             $sentenciaSQL = $conexion->prepare("INSERT INTO libros (nombre, imagen) VALUES (:nombre, :imagen);");
             $sentenciaSQL ->bindParam(':nombre',$txtNombre);
+
+            //------------------------------------------------------------------------
+            /*Para que al guardar los nombres de imagen no se repitan, hacemos una concatenacion de fecha y el nombre del archivo
+            primero comprobamos que exista una imagen al registrar, si es asi procede a colocar el nombreArchivo y si no, le da una imagen.jpg
+            solo como nombre*/
+            $fecha = new DateTime();
+            $nombreArchivo = ($txtImagen!="")?$fecha->getTimestamp()."_".$_FILES["txtImagen"]["name"]:"imagen.jpg";
+
+            $tmpImagen = $_FILES["txtImagen"]["tmp_name"];
+            if($tmpImagen!=""){ /*Si hay imagen,mueve el archivo de imagen a la siguiente carpeta*/
+                move_uploaded_file($tmpImagen,"../../img/".$nombreArchivo);
+            }
+            //----------------------------------------------------------------------------
             $sentenciaSQL ->bindParam(':imagen',$txtImagen);
             $sentenciaSQL->execute();/*Ejecutamos este sentencia*/
             
             // echo "Presionando botón de agregar"; fue para verificar que si se estaba haciendo caso al pulsar en el boton de agregar
             break; 
         case "Modificar":
+            
+            $sentenciaSQL = $conexion->prepare("UPDATE libros SET nombre=:nombre WHERE id=:id");
+            $sentenciaSQL ->bindParam(':nombre',$txtNombre);
+            $sentenciaSQL ->bindParam(':id',$txtID);
+            $sentenciaSQL->execute();/*Ejecutamos este sentencia*/
             //UPDATE `libros` SET `imagen` = 'imagen.jpg' WHERE `libros`.`id` = 1;
             // echo "Presionando botón de modificar";
+
+            //Para actualizar la imagen
+            if ($txtImagen!="") { /*sI HAY IMAGEN, hace esto igual */
+                $sentenciaSQL = $conexion->prepare("UPDATE libros SET imagen=:imagen WHERE id=:id");
+                $sentenciaSQL ->bindParam(':imagen',$txtImagen);
+                $sentenciaSQL ->bindParam(':id',$txtID);
+                $sentenciaSQL->execute();
+            }
+           
+
             break;
         case "Cancelar":
-            echo "Presionando botón de cancelar";
+            // echo "Presionando botón de cancelar";
+            break;
+        case "Seleccionar":
+            $sentenciaSQL = $conexion->prepare("SELECT * FROM libros WHERE id=:id");
+            $sentenciaSQL ->bindParam(':id',$txtID); /*Paso de parametros, el $txtID se pasa por el method POST  */
+            $sentenciaSQL->execute();
+            $libro = $sentenciaSQL -> fetch(PDO::FETCH_LAZY);
+            $txtNombre=$libro['nombre'];
+            $txtImagen=$libro['imagen']; /*Asigna los valores que se recueraron de la bd */
+             // echo "Presionando botón de seleccionar";
+
+            break;
+        case "Borrar":
+            $sentenciaSQL = $conexion->prepare("DELETE FROM libros WHERE id=:id");
+            $sentenciaSQL ->bindParam(':id',$txtID); /*Paso de parametros, el $txtID se pasa por el method POST  */
+            $sentenciaSQL->execute();
+            // echo "Presionando botón de borrar";
             break;
     }
     $sentenciaSQL = $conexion->prepare("SELECT * FROM libros");
@@ -57,16 +101,17 @@
             <form method="POST" enctype="multipart/form-data"><!--Para recepcionar todo tipo de archivos-->
                 <div class = "form-group">
                     <label for="txtID">ID:</label>
-                    <input type="text" class="form-control" name="txtID" id="txtID" placeholder="ID">
+                    <input type="text" class="form-control" value="<?php echo $txtID;?>" name="txtID" id="txtID" placeholder="ID">
                 </div>
 
                 <div class = "form-group">
                     <label for="txtNombre">Nombre:</label>
-                    <input type="text" class="form-control" name="txtNombre" id="txtNombre" placeholder="Nombre del libro">
+                    <input type="text" class="form-control" value="<?php echo $txtNombre;?>" name="txtNombre" id="txtNombre" placeholder="Nombre del libro">
                 </div>
                 
                 <div class = "form-group">
                     <label for="txtImagen">Imagen:</label>
+                    <?php echo $txtImagen;?>"
                     <input type="file" class="form-control" name="txtImagen" id="txtImagen" placeholder="Imagen del libro">
                 </div>
 
@@ -99,7 +144,15 @@
                 <td> <?php echo $libro['id']; ?></td> <!--Los datos tienen que coincidir con la base de datos,la tabla de bd -->
                 <td><?php echo $libro['nombre']; ?></td> <!--Mismos nombre de las columnas de la bd de la tabla libros -->
                 <td><?php echo $libro['imagen']; ?></td>
-                <td>Seleccionar | Borrar </td>
+                <td>
+                    <!-- Seleccionar | Borrar  -->
+                    <form method="POST">
+                        <input type="hidden" name="txtID" id="txtID" value="<?php echo $libro['id']; ?>">
+                        <input type="submit" name="accion" value="Seleccionar" class="btn btn-primary">
+                        <!--El name debe ser identico (accion) Para el boton de borrar-->
+                        <input type="submit" name="accion" value="Borrar" class="btn btn-danger">
+                    </form>
+                </td>
             </tr>
             <?php } ?>
         </tbody>
