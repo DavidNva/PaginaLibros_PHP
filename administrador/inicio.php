@@ -1,6 +1,8 @@
 <?php include("template/cabecera.php"); ?>
 
-            <div class="col-md-12">
+            <div class="col-md-12"> 
+                <!-- la pantalla - el div se divide en 12-->
+                <!-- usamos b4-jumbotron-default para este diseño -->
                 <div class="jumbotron">
                     <h1 class="display-3">Jumbo heading</h1>
                     <p class="lead">Jumbo helper text</p>

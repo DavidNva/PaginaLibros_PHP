@@ -5,9 +5,9 @@
                 <h1 class="display-3">Inicio</h1>
                 <p class="lead">Bienvenido a nuestra pagina </p>
                 <hr class="my-2">
-                <p>More info</p>
+                <p>Mas información</p>
                 <p class="lead">
-                    <a class="btn btn-primary btn-lg" href="Jumbo action link" role="button">Jumbo action name</a>
+                    <a class="btn btn-primary btn-lg" href="#" role="button">Mas información</a>
                 </p>
             </div>
 
