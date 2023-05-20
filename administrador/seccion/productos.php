@@ -20,7 +20,7 @@
             //prueba de insercion con la conexion a php
             /*Con los dos puntos indicamos los parametros a usar */
             $sentenciaSQL = $conexion->prepare("INSERT INTO libros (nombre, imagen) VALUES (:nombre, :imagen);");
-            $sentenciaSQL ->bindParam(':nombre',$txtNombre);
+           
 
             //------------------------------------------------------------------------
             /*Para que al guardar los nombres de imagen no se repitan, hacemos una concatenacion de fecha y el nombre del archivo
@@ -28,13 +28,14 @@
             solo como nombre*/
             $fecha = new DateTime();
             $nombreArchivo = ($txtImagen!="")?$fecha->getTimestamp()."_".$_FILES["txtImagen"]["name"]:"imagen.jpg";
-
             $tmpImagen = $_FILES["txtImagen"]["tmp_name"];
+            
             if($tmpImagen!=""){ /*Si hay imagen,mueve el archivo de imagen a la siguiente carpeta*/
                 move_uploaded_file($tmpImagen,"../../img/".$nombreArchivo);
             }
             //----------------------------------------------------------------------------
-            $sentenciaSQL ->bindParam(':imagen',$txtImagen);
+            $sentenciaSQL ->bindParam(':nombre',$txtNombre);
+            $sentenciaSQL ->bindParam(':imagen',$nombreArchivo);
             $sentenciaSQL->execute();/*Ejecutamos este sentencia*/
             
             // echo "Presionando botón de agregar"; fue para verificar que si se estaba haciendo caso al pulsar en el boton de agregar
@@ -50,8 +51,27 @@
 
             //Para actualizar la imagen
             if ($txtImagen!="") { /*sI HAY IMAGEN, hace esto igual */
+                $fecha = new DateTime();
+                $nombreArchivo = ($txtImagen!="")?$fecha->getTimestamp()."_".$_FILES["txtImagen"]["name"]:"imagen.jpg";
+                $tmpImagen = $_FILES["txtImagen"]["tmp_name"];
+                /*Se copia el archivo a esta carpeta */
+                move_uploaded_file($tmpImagen,"../../img/".$nombreArchivo);
+
+                //Borrar imagen(si ya no se va a usar y se va a actualizar por otra)
+                //Borra la imagen antigua
+                $sentenciaSQL = $conexion->prepare("SELECT imagen FROM libros WHERE id=:id");
+                $sentenciaSQL ->bindParam(':id',$txtID); /*Paso de parametros, el $txtID se pasa por el method POST  */
+                $sentenciaSQL->execute();
+                $libro = $sentenciaSQL -> fetch(PDO::FETCH_LAZY);
+
+                if(isset($libro["imagen"]) && ($libro["imagen"]!="imagen.jpg")){ /*Si existe la imagen */
+                    if(file_exists("../../img/".$libro["imagen"])){/*Busca la imagen y si existe pues la borramos */
+                        unlink("../../img/".$libro["imagen"]);/*Si existe la elimina */
+                    }
+                }
+
                 $sentenciaSQL = $conexion->prepare("UPDATE libros SET imagen=:imagen WHERE id=:id");
-                $sentenciaSQL ->bindParam(':imagen',$txtImagen);
+                $sentenciaSQL ->bindParam(':imagen',$nombreArchivo);
                 $sentenciaSQL ->bindParam(':id',$txtID);
                 $sentenciaSQL->execute();
             }
@@ -72,10 +92,23 @@
 
             break;
         case "Borrar":
+            //Borrar imagen
+            $sentenciaSQL = $conexion->prepare("SELECT imagen FROM libros WHERE id=:id");
+            $sentenciaSQL ->bindParam(':id',$txtID); /*Paso de parametros, el $txtID se pasa por el method POST  */
+            $sentenciaSQL->execute();
+            $libro = $sentenciaSQL -> fetch(PDO::FETCH_LAZY);
+
+            if(isset($libro["imagen"]) && ($libro["imagen"]!="imagen.jpg")){ /*Si existe la imagen */
+                if(file_exists("../../img/".$libro["imagen"])){/*Busca la imagen y si existe pues la borramos */
+                    unlink("../../img/".$libro["imagen"]);/*Si existe la elimina */
+                }
+            }
+
+            //Borra registro
             $sentenciaSQL = $conexion->prepare("DELETE FROM libros WHERE id=:id");
             $sentenciaSQL ->bindParam(':id',$txtID); /*Paso de parametros, el $txtID se pasa por el method POST  */
             $sentenciaSQL->execute();
-            // echo "Presionando botón de borrar";
+            //echo "Presionando botón de borrar";
             break;
     }
     $sentenciaSQL = $conexion->prepare("SELECT * FROM libros");
@@ -111,7 +144,7 @@
                 
                 <div class = "form-group">
                     <label for="txtImagen">Imagen:</label>
-                    <?php echo $txtImagen;?>"
+                    <?php echo $txtImagen;?>
                     <input type="file" class="form-control" name="txtImagen" id="txtImagen" placeholder="Imagen del libro">
                 </div>
 
