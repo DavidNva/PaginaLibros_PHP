@@ -38,6 +38,7 @@
             $sentenciaSQL ->bindParam(':imagen',$nombreArchivo);
             $sentenciaSQL->execute();/*Ejecutamos este sentencia*/
             
+            header(("Location:productos.php"));//Redireccion a productos
             // echo "Presionando botón de agregar"; fue para verificar que si se estaba haciendo caso al pulsar en el boton de agregar
             break; 
         case "Modificar":
@@ -74,12 +75,14 @@
                 $sentenciaSQL ->bindParam(':imagen',$nombreArchivo);
                 $sentenciaSQL ->bindParam(':id',$txtID);
                 $sentenciaSQL->execute();
+                header(("Location:productos.php"));//Redireccion a productos
             }
-           
-
+            header(("Location:productos.php"));//Redireccion a productos
             break;
         case "Cancelar":
             // echo "Presionando botón de cancelar";
+            //Redireccion
+            header(("Location:productos.php"));
             break;
         case "Seleccionar":
             $sentenciaSQL = $conexion->prepare("SELECT * FROM libros WHERE id=:id");
@@ -109,6 +112,7 @@
             $sentenciaSQL ->bindParam(':id',$txtID); /*Paso de parametros, el $txtID se pasa por el method POST  */
             $sentenciaSQL->execute();
             //echo "Presionando botón de borrar";
+            header(("Location:productos.php"));//Redireccion a productos
             break;
     }
     $sentenciaSQL = $conexion->prepare("SELECT * FROM libros");
@@ -134,12 +138,12 @@
             <form method="POST" enctype="multipart/form-data"><!--Para recepcionar todo tipo de archivos-->
                 <div class = "form-group">
                     <label for="txtID">ID:</label>
-                    <input type="text" class="form-control" value="<?php echo $txtID;?>" name="txtID" id="txtID" placeholder="ID">
+                    <input type="text" required readonly class="form-control" value="<?php echo $txtID;?>" name="txtID" id="txtID" placeholder="ID">
                 </div>
 
                 <div class = "form-group">
                     <label for="txtNombre">Nombre:</label>
-                    <input type="text" class="form-control" value="<?php echo $txtNombre;?>" name="txtNombre" id="txtNombre" placeholder="Nombre del libro">
+                    <input type="text" required class="form-control" value="<?php echo $txtNombre;?>" name="txtNombre" id="txtNombre" placeholder="Nombre del libro">
                 </div>
                 
                 <div class = "form-group">
@@ -155,9 +159,9 @@
 
                 <!--Usamos bt-bgrpup-default que coloca varios botones, para las acciones a realizar-->
                 <div class="btn-group" role="group" aria-label="">
-                    <button type="submit" name="accion" value="Agregar" class="btn btn-success">Agregar</button>
-                    <button type="submit" name="accion" value="Modificar"  class="btn btn-warning">Modificar</button>
-                    <button type="submit" name="accion" value="Cancelar"  class="btn btn-info">Cancelar</button>
+                    <button type="submit" name="accion" <?php echo($accion =="Seleccionar")?"disabled":""; ?> value="Agregar" class="btn btn-success">Agregar</button>
+                    <button type="submit" name="accion" <?php echo($accion !="Seleccionar")?"disabled":""; ?> value="Modificar"  class="btn btn-warning">Modificar</button>
+                    <button type="submit" name="accion" <?php echo($accion !="Seleccionar")?"disabled":""; ?> value="Cancelar"  class="btn btn-info">Cancelar</button>
                 </div>
             </form>
         
