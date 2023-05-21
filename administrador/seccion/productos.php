@@ -144,7 +144,12 @@
                 
                 <div class = "form-group">
                     <label for="txtImagen">Imagen:</label>
-                    <?php echo $txtImagen;?>
+                    <!-- <?php echo $txtImagen;?>  -->
+                    <br>
+                    <?php
+                        if($txtImagen!=""){ ?><!--Si hay imagen -->
+                        <img class="img-thumbnail rounded" src="../../img/<?php echo $txtImagen ?> " width="100" alt=""> 
+                    <?php   }?>
                     <input type="file" class="form-control" name="txtImagen" id="txtImagen" placeholder="Imagen del libro">
                 </div>
 
@@ -176,7 +181,11 @@
             <tr>
                 <td> <?php echo $libro['id']; ?></td> <!--Los datos tienen que coincidir con la base de datos,la tabla de bd -->
                 <td><?php echo $libro['nombre']; ?></td> <!--Mismos nombre de las columnas de la bd de la tabla libros -->
-                <td><?php echo $libro['imagen']; ?></td>
+                <td>
+                   <img class="img-thumbnail rounded"  src="../../img/<?php echo $libro['imagen']; ?> " width="100" alt=""> 
+                    
+                    <!-- <?php echo $libro['imagen']; ?> -->
+                </td>
                 <td>
                     <!-- Seleccionar | Borrar  -->
                     <form method="POST">
