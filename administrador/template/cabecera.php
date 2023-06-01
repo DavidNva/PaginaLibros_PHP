@@ -1,3 +1,18 @@
+<?php
+session_start();
+  if(!isset($_SESSION['usuario'])){ /*Session es una variable no creada hasta ahorita, si tiene informacion */
+    header("Location:../index.php"); /*Redirige al index si no hay usuario logeado */
+  }else{
+
+    if($_SESSION['usuario']=="ok"){
+      $nombreUsuario=$_SESSION["nombreUsuario"]; /*Hasta el momento no existen las variables nombre de usuario ni usuario */
+    }
+  }
+  
+
+?>
+
+
 <!-- Usamos el b4-$ par aque ya venga incluido boostrap y eliminamos la parte de javascript -->
 <!doctype html>
 <html lang="en">

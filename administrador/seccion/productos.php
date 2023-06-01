@@ -150,7 +150,7 @@
                     <label for="txtImagen">Imagen:</label>
                     <!-- <?php echo $txtImagen;?>  -->
                     <br>
-                    <?php
+                    <?php //<!--para ver imagen si se da en seleccionar-->
                         if($txtImagen!=""){ ?><!--Si hay imagen -->
                         <img class="img-thumbnail rounded" src="../../img/<?php echo $txtImagen ?> " width="100" alt=""> 
                     <?php   }?>

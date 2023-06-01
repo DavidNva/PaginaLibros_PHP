@@ -1,6 +1,15 @@
 <?php
+session_start();
 if($_POST){ #Si hay un envio tipo post, al dar clic en el boton
-    header('Location:inicio.php'); /*Hace la redireccion a esta pagina de inicio.php */
+    if(($_POST['usuario']=="david") && ($_POST['contrasenia']=="sistema")){/*Si existe el user u contraseña */
+        
+        $_SESSION['usuario']="ok"; /*Porque en cabecera al confirmar, debe llevar la variable session un "ok" */
+        $_SESSION['nombreUsuario']="David";
+        header('Location:inicio.php'); /*Hace la redireccion a esta pagina de inicio.php */
+    }else{
+        $mensaje="Error: El usuario o contraseña son incorrectos";
+    }
+
 }
 
 ?>
@@ -8,7 +17,7 @@ if($_POST){ #Si hay un envio tipo post, al dar clic en el boton
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Title</title>
+    <title>Administrador</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -30,6 +39,12 @@ if($_POST){ #Si hay un envio tipo post, al dar clic en el boton
                         Login
                     </div>
                     <div class="card-body">
+                        <?php if(isset($mensaje)){?>
+                            <div class="alert alert-danger" role="alert">
+                                <?php echo $mensaje; ?>
+                            </div>
+                        <?php } ?>
+                        
                         <!-- !crt-form-login, escribiendo esto se aplica el codigo de diseño de login -->
                         <form method="POST"> <!--El tipo Envio de datos-->
                             <div class = "form-group">

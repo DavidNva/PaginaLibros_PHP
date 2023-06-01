@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./css/bootstrap.min.css">
 </head>
 <body>
-
+<?php $url = "http://".$_SERVER['HTTP_HOST']."/sitioweb/administrador/index.php"?> 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <ul class="nav navbar-nav">
             <li class="nav-item">
@@ -23,6 +23,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="nosotros.php">Nosotros</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo $url;?>">Login</a>
             </li>
         </ul>
        
